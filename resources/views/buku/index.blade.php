@@ -51,7 +51,10 @@
                                 @endif
                             </td>
                             <td>
+                                
                                 <a href="{{ route('buku.edit', $buku->id) }}" class="btn btn-primary">Edit</a>
+                                <a href="{{ route('buku.show', $buku->id) }}" class="btn btn-sm btn-info">Show</a>
+
                                 <form action="{{ route('buku.destroy', $buku->id) }}" method="POST" style="display: inline-block;">
                                     @csrf
                                     @method('DELETE')

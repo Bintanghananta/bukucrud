@@ -78,8 +78,11 @@ class BukuController extends Controller
      */
     public function show($id)
     {
-        //
+        $buku = Buku::findOrFail($id);
+    
+        return view('buku.show', compact('buku'));
     }
+    
 
     /**
      * Show the form for editing the specified resource.
@@ -89,7 +92,9 @@ class BukuController extends Controller
      */
     public function edit($id)
     {
-        //
+        $buku = Buku::findOrFail($id);
+    
+        return view('buku.update', compact('buku'));
     }
 
     /**
@@ -99,10 +104,36 @@ class BukuController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, $id)
-    {
-        //
+    public function update(Request $request, Buku $buku)
+{
+    $request->validate([
+        'judul' => 'required',
+        'penerbit' => 'required',
+        'pengarang' => 'required',
+        'image' => 'image|mimes:jpeg,png,jpg,gif,svg|max:2048',
+    ]);
+
+    if ($request->hasFile('image')) {
+        if ($buku->image) {
+            Storage::delete('public/'.$buku->image);
+        }
+        $image = $request->file('image')->store('public');
+        $image = str_replace('public/', '', $image);
+    } else {
+        $image = $buku->image;
     }
+
+    $buku->update([
+        'judul' => $request->judul,
+        'penerbit' => $request->penerbit,
+        'pengarang' => $request->pengarang,
+        'image' => $image,
+    ]);
+
+    return redirect()->route('buku.index')
+                     ->with('success', 'Data buku berhasil diperbarui');
+}
+
 
     /**
      * Remove the specified resource from storage.
